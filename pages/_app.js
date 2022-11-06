@@ -12,17 +12,20 @@ import {
 } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
+import { apolloClient } from '../Utils/utils';
+import { ApolloProvider } from '@apollo/client';
+import WalletProvider from '../components/common/WalletContext';
 
 const { chains, provider } = configureChains(
-  [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
+  [chain.polygonMumbai, chain.polygon, chain.optimism, chain.arbitrum],
   [
-    alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
+    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
     publicProvider()
   ]
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'My RainbowKit App',
+  appName: 'Kaarigar',
   chains
 });
 
@@ -37,7 +40,11 @@ function MyApp({ Component, pageProps }) {
   return(
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains}>
-      <Component {...pageProps} />
+          <ApolloProvider client={apolloClient}>
+        <WalletProvider>
+            <Component {...pageProps} />
+        </WalletProvider>
+          </ApolloProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   );
